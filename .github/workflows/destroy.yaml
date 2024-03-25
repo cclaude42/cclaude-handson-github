@@ -1,0 +1,24 @@
+name: Destroy architecture
+run-name: Destroy TF stack 🏗️
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Assume OIDC role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.REGION }}
+          role-to-assume: ${{ vars.OIDC_ROLE }}
+          audience: https://token.actions.githubusercontent.com
+      - name: TF destroy
+        run: make destroy

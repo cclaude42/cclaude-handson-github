@@ -22,6 +22,7 @@ jobs:
         with:
           aws-region: ${{ vars.REGION }}
           role-to-assume: ${{ vars.OIDC_ROLE }}
+          audience: https://token.actions.githubusercontent.com
       - name: TF init
         run: make init
       - name: TF plan

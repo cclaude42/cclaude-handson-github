@@ -1,0 +1,30 @@
+name: Build architecture
+run-name: Apply TF stack 🏗️
+
+on:
+  push:
+    paths:
+      - '**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write # This is required for requesting the JWT
+  contents: read # This is required for actions/checkout
+
+jobs:
+  build_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+      - name: Assume OIDC role
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.REGION }}
+          role-to-assume: ${{ vars.OIDC_ROLE }}
+      - name: TF init
+        run: make init
+      - name: TF plan
+        run: make plan
+      - name: TF apply
+        run: make apply
